@@ -385,6 +385,13 @@ namespace dryfruits {
 
 		}
 #pragma endregion
+
+
+		public: void customerName(String^ Name) {
+
+			customerName_label->Text = Name;
+
+		}
 		
 
 		// List to hold items in the cart
@@ -443,8 +450,16 @@ private: System::Void addtocart_button_Click(System::Object^ sender, System::Eve
 
 
 private: System::Void bill_button_Click(System::Object^ sender, System::EventArgs^ e) {
+
+	
+
+
 	// Get the instance of billing_dform
      payment^ billingForm = gcnew payment();
+
+	 //Sending Customer Name
+
+	 billingForm->customerName(customerName_label->Text);
 
 	// Get data from MyForm1's listBox
 	List<System::String^>^ listBoxData = gcnew List<System::String^>();

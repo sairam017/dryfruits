@@ -47,6 +47,8 @@ namespace dryfruits {
 
 	private: System::Windows::Forms::DataGridView^ dataGridView1;
 	private: System::Windows::Forms::Button^ refresh_button;
+	private: System::Windows::Forms::Label^ CustomerName_label;
+
 
 
 
@@ -70,6 +72,7 @@ namespace dryfruits {
 			this->pay_button = (gcnew System::Windows::Forms::Button());
 			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
 			this->refresh_button = (gcnew System::Windows::Forms::Button());
+			this->CustomerName_label = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -95,7 +98,7 @@ namespace dryfruits {
 			this->totalPrice_label->AutoSize = true;
 			this->totalPrice_label->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
-			this->totalPrice_label->Location = System::Drawing::Point(119, 220);
+			this->totalPrice_label->Location = System::Drawing::Point(130, 231);
 			this->totalPrice_label->Name = L"totalPrice_label";
 			this->totalPrice_label->Size = System::Drawing::Size(147, 32);
 			this->totalPrice_label->TabIndex = 6;
@@ -103,7 +106,7 @@ namespace dryfruits {
 			// 
 			// pay_button
 			// 
-			this->pay_button->Location = System::Drawing::Point(143, 284);
+			this->pay_button->Location = System::Drawing::Point(136, 284);
 			this->pay_button->Name = L"pay_button";
 			this->pay_button->Size = System::Drawing::Size(134, 23);
 			this->pay_button->TabIndex = 7;
@@ -131,12 +134,24 @@ namespace dryfruits {
 			this->refresh_button->UseVisualStyleBackColor = true;
 			this->refresh_button->Click += gcnew System::EventHandler(this, &payment::refresh_button_Click);
 			// 
+			// CustomerName_label
+			// 
+			this->CustomerName_label->AutoSize = true;
+			this->CustomerName_label->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular,
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->CustomerName_label->Location = System::Drawing::Point(446, 9);
+			this->CustomerName_label->Name = L"CustomerName_label";
+			this->CustomerName_label->Size = System::Drawing::Size(221, 32);
+			this->CustomerName_label->TabIndex = 10;
+			this->CustomerName_label->Text = L"Customer NAme";
+			// 
 			// payment
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->ClientSize = System::Drawing::Size(1190, 339);
+			this->Controls->Add(this->CustomerName_label);
 			this->Controls->Add(this->refresh_button);
 			this->Controls->Add(this->dataGridView1);
 			this->Controls->Add(this->pay_button);
@@ -153,6 +168,15 @@ namespace dryfruits {
 #pragma endregion
 
 		public: 
+			
+
+			public: void customerName(String^ Name) {
+
+				CustomerName_label->Text = Name;
+
+			}
+
+
 
 			void RefreshDataGridView() {
 				try {
@@ -236,7 +260,7 @@ namespace dryfruits {
 private: System::Void pay_button_Click(System::Object^ sender, System::EventArgs^ e) {
 
 	// Get the customer name
-	String^ customerName = "SaiRam"; // Assuming you want to use the hardcoded name
+	 // Assuming you want to use the hardcoded name
 
 	// Get the item list from the listBox
 	String^ itemList = "";
@@ -250,7 +274,7 @@ private: System::Void pay_button_Click(System::Object^ sender, System::EventArgs
 	// Get the total price from the label
 	Decimal totalPrice = System::Convert::ToDecimal(totalPrice_label->Text);
 
-
+	String^ customerName = CustomerName_label->Text;
 
 	try {
 		EnsureSqlConnectionOpen();
