@@ -59,5 +59,11 @@
     <ClInclude Include="bill.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CartItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Calculation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

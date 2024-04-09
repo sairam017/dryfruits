@@ -2,6 +2,8 @@
 #include "MyForm1.h"
 #include "Registration.h"
 #include "bill.h"
+#include "MyForm1.h"
+
 namespace dryfruits {
 
 	using namespace System;
@@ -52,12 +54,6 @@ namespace dryfruits {
 
 	private: System::Windows::Forms::Label^ label5;
 	private: System::Windows::Forms::Button^ button1;
-	private: System::Windows::Forms::Button^ button2;
-	private: System::Windows::Forms::Label^ label4;
-	private: System::Windows::Forms::TextBox^ textBox3;
-
-
-
 
 
 
@@ -89,9 +85,6 @@ namespace dryfruits {
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->button2 = (gcnew System::Windows::Forms::Button());
-			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
 			this->SuspendLayout();
 			// 
 			// label1
@@ -178,34 +171,6 @@ namespace dryfruits {
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
 			// 
-			// button2
-			// 
-			this->button2->Location = System::Drawing::Point(515, 396);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(127, 50);
-			this->button2->TabIndex = 12;
-			this->button2->Text = L"Close form";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
-			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 13.8F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label4->Location = System::Drawing::Point(59, 284);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(109, 29);
-			this->label4->TabIndex = 13;
-			this->label4->Text = L"Address";
-			// 
-			// textBox3
-			// 
-			this->textBox3->Location = System::Drawing::Point(180, 291);
-			this->textBox3->Name = L"textBox3";
-			this->textBox3->Size = System::Drawing::Size(114, 22);
-			this->textBox3->TabIndex = 14;
-			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
@@ -213,9 +178,6 @@ namespace dryfruits {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Zoom;
 			this->ClientSize = System::Drawing::Size(725, 551);
-			this->Controls->Add(this->textBox3);
-			this->Controls->Add(this->label4);
-			this->Controls->Add(this->button2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->textBox2);
@@ -233,56 +195,82 @@ namespace dryfruits {
 		}
 #pragma endregion
 
+
+		
+
 	private: System::Void next_button_Click(System::Object^ sender, System::EventArgs^ e)
 	{
+		// Extract name and mobile from text boxes
 		String^ Name = textBox1->Text;
 		String^ Mobile = textBox2->Text;
-		String^ Address = textBox3->Text;
 
-		String^ con = "Data Source=sairam\\SQLEXPRESS;Initial Catalog=dryfoodproject;Integrated Security=True;";
-		SqlConnection sqconn(con);
-		sqconn.Open();
-		String^ sqlquery = "SELECT Name, Mobile, Address FROM Registration WHERE Name = @Name AND Mobile = @Mobile AND Address = @Address";
-		SqlCommand cmd(sqlquery, % sqconn);
-
-		cmd.Parameters->AddWithValue("@Name", Name);
-		cmd.Parameters->AddWithValue("@Mobile", Mobile);
-		cmd.Parameters->AddWithValue("@Address", Address);
-		SqlDataReader^ read = cmd.ExecuteReader();
-
-		if (Name->Length == 0 || Mobile->Length == 0 || Address->Length == 0)
+		// Check if name or mobile are empty
+		if (String::IsNullOrEmpty(Name) || String::IsNullOrEmpty(Mobile))
 		{
-			MessageBox::Show("Please Enter the Name and Mobile and Address", "Name or Mobile or Address is missing", MessageBoxButtons::OK, MessageBoxIcon::Error);
-			textBox1->Clear();
-			textBox2->Clear();
-			textBox3->Clear();
+			MessageBox::Show("Please enter the Name and Mobile.", "Missing Information", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			return;
 		}
 
-		else if (read->Read())
+		// Connection string to the database
+		String^ conString = "Data Source=sairam\\SQLEXPRESS;Initial Catalog=dryfoodproject;Integrated Security=True;";
+
+		// Establish connection
+		SqlConnection^ connection = gcnew SqlConnection(conString);
+		try
 		{
-			MyForm1^ sa = gcnew MyForm1();
-			sa->ShowDialog();
-			textBox1->Clear();
-			textBox2->Clear();
-			textBox3->Clear();
+			// Open the connection
+			connection->Open();
+
+			// SQL query to check if name and mobile exist in the database
+			String^ sqlQuery = "SELECT Name, Mobile FROM Registration WHERE Name = @Name AND Mobile = @Mobile";
+			SqlCommand^ command = gcnew SqlCommand(sqlQuery, connection);
+
+			// Add parameters to the command to prevent SQL injection
+			command->Parameters->AddWithValue("@Name", Name);
+			command->Parameters->AddWithValue("@Mobile", Mobile);
+
+			// Execute the query
+			SqlDataReader^ reader = command->ExecuteReader();
+
+			// If record found, open MyForm1 and pass the name
+			if (reader->Read())
+			{
+				MyForm1^ form1 = gcnew MyForm1();
+				form1->customerName(Name);
+				form1->ShowDialog();
+
+				
+				 // Close the current form
+			}
+			else // No record found
+			{
+				MessageBox::Show("Enter the correct Name or Mobile.", "Invalid Information", MessageBoxButtons::OK, MessageBoxIcon::Exclamation);
+				textBox1->Clear();
+				textBox2->Clear();
+			}
+
+			// Close the reader
+			reader->Close();
 		}
-		else
+		catch (SqlException^ ex)
 		{
-			MessageBox::Show("Enter The Correct Name or Mobile or Address", "Rejected", MessageBoxButtons::OK, MessageBoxIcon::Exclamation);
-			textBox1->Clear();
-			textBox2->Clear();
-			textBox3->Clear();
+			// Handle SQL exception
+			MessageBox::Show(ex->Message, "SQL Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+		finally
+		{
+			// Close the connection
+			connection->Close();
 		}
 	}
+
+
 	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e)
 	{
 		Registration^ rm = gcnew Registration();
 		rm->ShowDialog();
 	}
-	private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e)
-	{
-		this->Close();
-	}
+	
 	private: System::Void label5_Click(System::Object^ sender, System::EventArgs^ e) {
 	}
 	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
