@@ -8,6 +8,7 @@ namespace dryfruits {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Data::SqlClient;
 
 	/// <summary>
 	/// Summary for payment
@@ -42,7 +43,11 @@ namespace dryfruits {
 
 	private: System::Windows::Forms::ListBox^ listBox_billing;
 	private: System::Windows::Forms::Label^ totalPrice_label;
-	private: System::Windows::Forms::Button^ button1;
+	private: System::Windows::Forms::Button^ pay_button;
+
+	private: System::Windows::Forms::DataGridView^ dataGridView1;
+	private: System::Windows::Forms::Button^ refresh_button;
+
 
 
 	private:
@@ -62,7 +67,10 @@ namespace dryfruits {
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->listBox_billing = (gcnew System::Windows::Forms::ListBox());
 			this->totalPrice_label = (gcnew System::Windows::Forms::Label());
-			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->pay_button = (gcnew System::Windows::Forms::Button());
+			this->dataGridView1 = (gcnew System::Windows::Forms::DataGridView());
+			this->refresh_button = (gcnew System::Windows::Forms::Button());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// label2
@@ -93,15 +101,35 @@ namespace dryfruits {
 			this->totalPrice_label->TabIndex = 6;
 			this->totalPrice_label->Text = L"Total price";
 			// 
-			// button1
+			// pay_button
 			// 
-			this->button1->Location = System::Drawing::Point(143, 284);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(134, 23);
-			this->button1->TabIndex = 7;
-			this->button1->Text = L"Pay And Confirm";
-			this->button1->UseVisualStyleBackColor = true;
-			
+			this->pay_button->Location = System::Drawing::Point(143, 284);
+			this->pay_button->Name = L"pay_button";
+			this->pay_button->Size = System::Drawing::Size(134, 23);
+			this->pay_button->TabIndex = 7;
+			this->pay_button->Text = L"Pay And Confirm";
+			this->pay_button->UseVisualStyleBackColor = true;
+			this->pay_button->Click += gcnew System::EventHandler(this, &payment::pay_button_Click);
+			// 
+			// dataGridView1
+			// 
+			this->dataGridView1->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->dataGridView1->Location = System::Drawing::Point(417, 52);
+			this->dataGridView1->Name = L"dataGridView1";
+			this->dataGridView1->RowHeadersWidth = 51;
+			this->dataGridView1->RowTemplate->Height = 24;
+			this->dataGridView1->Size = System::Drawing::Size(737, 211);
+			this->dataGridView1->TabIndex = 8;
+			// 
+			// refresh_button
+			// 
+			this->refresh_button->Location = System::Drawing::Point(728, 284);
+			this->refresh_button->Name = L"refresh_button";
+			this->refresh_button->Size = System::Drawing::Size(134, 23);
+			this->refresh_button->TabIndex = 9;
+			this->refresh_button->Text = L"Refresh";
+			this->refresh_button->UseVisualStyleBackColor = true;
+			this->refresh_button->Click += gcnew System::EventHandler(this, &payment::refresh_button_Click);
 			// 
 			// payment
 			// 
@@ -109,13 +137,15 @@ namespace dryfruits {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->ClientSize = System::Drawing::Size(1190, 339);
-			this->Controls->Add(this->button1);
+			this->Controls->Add(this->refresh_button);
+			this->Controls->Add(this->dataGridView1);
+			this->Controls->Add(this->pay_button);
 			this->Controls->Add(this->totalPrice_label);
 			this->Controls->Add(this->listBox_billing);
 			this->Controls->Add(this->label2);
 			this->Name = L"payment";
 			this->Text = L"payment";
-			this->Load += gcnew System::EventHandler(this, &payment::payment_Load);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -124,7 +154,32 @@ namespace dryfruits {
 
 		public: 
 
-			
+			void RefreshDataGridView() {
+				try {
+					// Ensure the connection is open
+					EnsureSqlConnectionOpen();
+
+					// Define your SELECT query
+					String^ selectQuery = "SELECT * FROM Transactions";
+
+					// Create a new SqlDataAdapter
+					SqlDataAdapter^ adapter = gcnew SqlDataAdapter(selectQuery, connection);
+
+					// Create a new DataTable to hold the data
+					DataTable^ dataTable = gcnew DataTable();
+
+					// Fill the DataTable with data from the SQL table
+					adapter->Fill(dataTable);
+
+					// Bind the DataTable to the DataGridView
+					dataGridView1->DataSource = dataTable;
+				}
+				catch (Exception^ ex) {
+					// Handle any exceptions
+					MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				}
+			}
+
 			
 			void ReceiveDataFromMyForm1(System::Collections::Generic::List<System::String^>^ data){
 			// Clear existing items
@@ -143,11 +198,94 @@ namespace dryfruits {
 
 
 
+			// Connection string to your SQL Server database
+			String^ connectionString = "Data Source=sairam\\SQLEXPRESS;Initial Catalog=dryfoodproject;Integrated Security=True;";
+			// Create a SqlConnection
+			SqlConnection^ connection = gcnew SqlConnection(connectionString);
 
-	private: System::Void payment_Load(System::Object^ sender, System::EventArgs^ e) {
+			// Ensure connection to the SQL Server database
+			void EnsureSqlConnectionOpen() {
+				// Check if the connection is already open
+				if (connection->State == ConnectionState::Open) {
+					return; // Connection is already open
+				}
+				else {
+					// Connection is not open, try to open it
+					try {
+						// Set the connection string if it's not set already
+						if (connection->ConnectionString == nullptr || connection->ConnectionString->Trim()->Length == 0) {
+							connection->ConnectionString = connectionString;
+						}
+
+						// Open the connection
+						connection->Open();
+					}
+					catch (Exception^ ex) {
+						// Connection could not be opened, handle the exception
+						MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					}
+				}
+			}
 
 
-	}
+
+
 	
+	
+
+private: System::Void pay_button_Click(System::Object^ sender, System::EventArgs^ e) {
+
+	// Get the customer name
+	String^ customerName = "SaiRam"; // Assuming you want to use the hardcoded name
+
+	// Get the item list from the listBox
+	String^ itemList = "";
+	for (int i = 0; i < listBox_billing->Items->Count; i++) {
+		itemList += listBox_billing->Items[i]->ToString();
+		if (i < listBox_billing->Items->Count - 1) {
+			itemList += ", "; // Add comma between items
+		}
+	}
+
+	// Get the total price from the label
+	Decimal totalPrice = System::Convert::ToDecimal(totalPrice_label->Text);
+
+
+
+	try {
+		EnsureSqlConnectionOpen();
+
+		// Create the INSERT query
+		String^ query = "INSERT INTO Transactions (Customer_name, ItemList, Date_and_Time, Price_paid) VALUES (@CustomerName, @ItemList, @DateTime, @Price)";
+
+		// Create a SqlCommand
+		SqlCommand^ command = gcnew SqlCommand(query, connection);
+
+		// Add parameters to the command
+		command->Parameters->AddWithValue("@CustomerName", customerName);
+		command->Parameters->AddWithValue("@ItemList", itemList);
+		command->Parameters->AddWithValue("@DateTime", DateTime::Now);
+		command->Parameters->AddWithValue("@Price", totalPrice);
+
+		// Execute the command
+		command->ExecuteNonQuery();
+
+		// Close the connection
+		connection->Close();
+
+		// Inform the user that the transaction has been successful
+		MessageBox::Show("Transaction completed successfully!", "Success", MessageBoxButtons::OK, MessageBoxIcon::Information);
+		RefreshDataGridView();
+	}
+	catch (Exception^ ex) {
+		// Handle any exceptions
+		MessageBox::Show("Error: " + ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+	}
+
+	
+}
+private: System::Void refresh_button_Click(System::Object^ sender, System::EventArgs^ e) {
+	 RefreshDataGridView();
+}
 };
 }
