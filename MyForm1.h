@@ -91,12 +91,15 @@ namespace dryfruits {
 
 
 	private: System::Windows::Forms::ComboBox^ comboBox1;
-	private: System::Windows::Forms::Button^ addtocart_button;
+
 	private: System::Windows::Forms::ListBox^ cart_listBox;
 	private: System::Windows::Forms::Label^ customerName_label;
 	private: System::Windows::Forms::NumericUpDown^ numericUpDown1;
 	private: System::Windows::Forms::Label^ price_label;
 	private: System::Windows::Forms::Label^ TotalPricelabel;
+	private: System::Windows::Forms::PictureBox^ AddCartpictureBox;
+	private: System::Windows::Forms::PictureBox^ pictureBox1;
+
 
 
 
@@ -128,6 +131,7 @@ namespace dryfruits {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(MyForm1::typeid));
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->bill_button = (gcnew System::Windows::Forms::Button());
@@ -142,13 +146,16 @@ namespace dryfruits {
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->label12 = (gcnew System::Windows::Forms::Label());
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
-			this->addtocart_button = (gcnew System::Windows::Forms::Button());
 			this->cart_listBox = (gcnew System::Windows::Forms::ListBox());
 			this->customerName_label = (gcnew System::Windows::Forms::Label());
 			this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
 			this->price_label = (gcnew System::Windows::Forms::Label());
 			this->TotalPricelabel = (gcnew System::Windows::Forms::Label());
+			this->AddCartpictureBox = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->AddCartpictureBox))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// label1
@@ -165,7 +172,7 @@ namespace dryfruits {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(26, 64);
+			this->label2->Location = System::Drawing::Point(28, 66);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(228, 16);
 			this->label2->TabIndex = 27;
@@ -267,7 +274,7 @@ namespace dryfruits {
 			this->label12->AutoSize = true;
 			this->label12->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label12->Location = System::Drawing::Point(363, 81);
+			this->label12->Location = System::Drawing::Point(379, 85);
 			this->label12->Name = L"label12";
 			this->label12->Size = System::Drawing::Size(126, 25);
 			this->label12->TabIndex = 43;
@@ -286,23 +293,11 @@ namespace dryfruits {
 			this->comboBox1->TabIndex = 47;
 			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm1::comboBox1_SelectedIndexChanged);
 			// 
-			// addtocart_button
-			// 
-			this->addtocart_button->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->addtocart_button->Location = System::Drawing::Point(798, 131);
-			this->addtocart_button->Name = L"addtocart_button";
-			this->addtocart_button->Size = System::Drawing::Size(106, 60);
-			this->addtocart_button->TabIndex = 48;
-			this->addtocart_button->Text = L"Add to cart";
-			this->addtocart_button->UseVisualStyleBackColor = true;
-			this->addtocart_button->Click += gcnew System::EventHandler(this, &MyForm1::addtocart_button_Click);
-			// 
 			// cart_listBox
 			// 
 			this->cart_listBox->FormattingEnabled = true;
 			this->cart_listBox->ItemHeight = 16;
-			this->cart_listBox->Location = System::Drawing::Point(937, 81);
+			this->cart_listBox->Location = System::Drawing::Point(927, 45);
 			this->cart_listBox->Name = L"cart_listBox";
 			this->cart_listBox->Size = System::Drawing::Size(308, 196);
 			this->cart_listBox->TabIndex = 49;
@@ -345,24 +340,46 @@ namespace dryfruits {
 			this->TotalPricelabel->AutoSize = true;
 			this->TotalPricelabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->TotalPricelabel->Location = System::Drawing::Point(830, 301);
+			this->TotalPricelabel->Location = System::Drawing::Point(1007, 253);
 			this->TotalPricelabel->Name = L"TotalPricelabel";
-			this->TotalPricelabel->Size = System::Drawing::Size(141, 25);
+			this->TotalPricelabel->Size = System::Drawing::Size(116, 25);
 			this->TotalPricelabel->TabIndex = 53;
-			this->TotalPricelabel->Text = L"Product Price";
+			this->TotalPricelabel->Text = L"Total Price";
 			this->TotalPricelabel->Click += gcnew System::EventHandler(this, &MyForm1::TotalPricelabel_Click);
+			// 
+			// AddCartpictureBox
+			// 
+			this->AddCartpictureBox->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"AddCartpictureBox.Image")));
+			this->AddCartpictureBox->Location = System::Drawing::Point(768, 120);
+			this->AddCartpictureBox->Name = L"AddCartpictureBox";
+			this->AddCartpictureBox->Size = System::Drawing::Size(100, 89);
+			this->AddCartpictureBox->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->AddCartpictureBox->TabIndex = 54;
+			this->AddCartpictureBox->TabStop = false;
+			this->AddCartpictureBox->Click += gcnew System::EventHandler(this, &MyForm1::AddCartpictureBox_Click);
+			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox1.Image")));
+			this->pictureBox1->Location = System::Drawing::Point(91, 293);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(100, 89);
+			this->pictureBox1->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox1->TabIndex = 55;
+			this->pictureBox1->TabStop = false;
 			// 
 			// MyForm1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1257, 402);
+			this->Controls->Add(this->pictureBox1);
+			this->Controls->Add(this->AddCartpictureBox);
 			this->Controls->Add(this->TotalPricelabel);
 			this->Controls->Add(this->price_label);
 			this->Controls->Add(this->numericUpDown1);
 			this->Controls->Add(this->customerName_label);
 			this->Controls->Add(this->cart_listBox);
-			this->Controls->Add(this->addtocart_button);
 			this->Controls->Add(this->comboBox1);
 			this->Controls->Add(this->label12);
 			this->Controls->Add(this->panel1);
@@ -380,6 +397,8 @@ namespace dryfruits {
 			this->Name = L"MyForm1";
 			this->Text = L"MyForm1";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->AddCartpictureBox))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -425,28 +444,7 @@ namespace dryfruits {
 			}
 		}
 
-private: System::Void addtocart_button_Click(System::Object^ sender, System::EventArgs^ e) {
 
-	// Get the selected item from the ComboBox
-	String^ selectedItem = comboBox1->SelectedItem->ToString();
-
-	// Get the quantity from the NumericUpDown control
-	int quantity = (int)numericUpDown1->Value;
-
-	// Get the selected item from the ComboBox
-	int price = System::Convert::ToInt32(price_label->Text);
-
-	// Add the item to the cart
-	CartItem^ newItem = gcnew CartItem();
-	newItem->itemName = selectedItem;
-	newItem->quantity = quantity;
-	newItem->price = price;
-	cartItems->Add(newItem);
-
-	// Update the ListView or DataGridView
-	UpdateCartDisplay();
-
-}
 
 
 private: System::Void bill_button_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -529,6 +527,29 @@ private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, Sys
 
 	// Update the label to display the total price
 	price_label->Text = totalPrice.ToString();
+}
+
+
+private: System::Void AddCartpictureBox_Click(System::Object^ sender, System::EventArgs^ e) {
+
+	// Get the selected item from the ComboBox
+	String^ selectedItem = comboBox1->SelectedItem->ToString();
+
+	// Get the quantity from the NumericUpDown control
+	int quantity = (int)numericUpDown1->Value;
+
+	// Get the selected item from the ComboBox
+	int price = System::Convert::ToInt32(price_label->Text);
+
+	// Add the item to the cart
+	CartItem^ newItem = gcnew CartItem();
+	newItem->itemName = selectedItem;
+	newItem->quantity = quantity;
+	newItem->price = price;
+	cartItems->Add(newItem);
+
+	// Update the ListView or DataGridView
+	UpdateCartDisplay();
 }
 };
 }
