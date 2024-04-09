@@ -132,6 +132,8 @@
     <ClInclude Include="bill.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Calculation.h" />
+    <ClInclude Include="CartItem.h" />
     <ClInclude Include="cost.h">
       <FileType>CppForm</FileType>
     </ClInclude>

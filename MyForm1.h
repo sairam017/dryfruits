@@ -2,6 +2,10 @@
 #pragma once
 #include "bill.h"
 #include "Registration.h"
+#include "CartItem.h"
+#include "payment.h"
+#include "Calculation.h"
+
 namespace dryfruits {
 
 	using namespace System;
@@ -11,6 +15,8 @@ namespace dryfruits {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::Data::SqlClient;
+	using namespace System::Collections::Generic;
+
 	/// <summary>
 	/// Summary for MyForm1
 	/// </summary>
@@ -69,8 +75,8 @@ namespace dryfruits {
 
 
 
-	private: System::Windows::Forms::Label^ label3;
-	private: System::Windows::Forms::TextBox^ textBox1;
+
+
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::Label^ label5;
 	private: System::Windows::Forms::Label^ label6;
@@ -82,10 +88,16 @@ namespace dryfruits {
 	private: System::Windows::Forms::Panel^ panel1;
 	private: System::Windows::Forms::Label^ label12;
 
-	private: System::Windows::Forms::Label^ label13;
-	private: System::Windows::Forms::TextBox^ textBox3;
+
+
 	private: System::Windows::Forms::ComboBox^ comboBox1;
 	private: System::Windows::Forms::Button^ addtocart_button;
+	private: System::Windows::Forms::ListBox^ cart_listBox;
+	private: System::Windows::Forms::Label^ customerName_label;
+	private: System::Windows::Forms::NumericUpDown^ numericUpDown1;
+	private: System::Windows::Forms::Label^ price_label;
+	private: System::Windows::Forms::Label^ TotalPricelabel;
+
 
 
 
@@ -119,8 +131,6 @@ namespace dryfruits {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->bill_button = (gcnew System::Windows::Forms::Button());
-			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
@@ -131,10 +141,14 @@ namespace dryfruits {
 			this->label11 = (gcnew System::Windows::Forms::Label());
 			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->label12 = (gcnew System::Windows::Forms::Label());
-			this->label13 = (gcnew System::Windows::Forms::Label());
-			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
 			this->addtocart_button = (gcnew System::Windows::Forms::Button());
+			this->cart_listBox = (gcnew System::Windows::Forms::ListBox());
+			this->customerName_label = (gcnew System::Windows::Forms::Label());
+			this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
+			this->price_label = (gcnew System::Windows::Forms::Label());
+			this->TotalPricelabel = (gcnew System::Windows::Forms::Label());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// label1
@@ -161,29 +175,13 @@ namespace dryfruits {
 			// 
 			this->bill_button->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->bill_button->Location = System::Drawing::Point(585, 314);
+			this->bill_button->Location = System::Drawing::Point(1041, 301);
 			this->bill_button->Name = L"bill_button";
 			this->bill_button->Size = System::Drawing::Size(107, 64);
 			this->bill_button->TabIndex = 31;
 			this->bill_button->Text = L"Go to bill";
 			this->bill_button->UseVisualStyleBackColor = true;
 			this->bill_button->Click += gcnew System::EventHandler(this, &MyForm1::bill_button_Click);
-			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(339, 211);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(250, 16);
-			this->label3->TabIndex = 32;
-			this->label3->Text = L"By the conformation Enter Mobile number";
-			// 
-			// textBox1
-			// 
-			this->textBox1->Location = System::Drawing::Point(547, 250);
-			this->textBox1->Name = L"textBox1";
-			this->textBox1->Size = System::Drawing::Size(127, 22);
-			this->textBox1->TabIndex = 33;
 			// 
 			// label4
 			// 
@@ -275,24 +273,6 @@ namespace dryfruits {
 			this->label12->TabIndex = 43;
 			this->label12->Text = L"Select Item ";
 			// 
-			// label13
-			// 
-			this->label13->AutoSize = true;
-			this->label13->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->label13->Location = System::Drawing::Point(361, 139);
-			this->label13->Name = L"label13";
-			this->label13->Size = System::Drawing::Size(144, 25);
-			this->label13->TabIndex = 45;
-			this->label13->Text = L"No of packets";
-			// 
-			// textBox3
-			// 
-			this->textBox3->Location = System::Drawing::Point(547, 145);
-			this->textBox3->Name = L"textBox3";
-			this->textBox3->Size = System::Drawing::Size(145, 22);
-			this->textBox3->TabIndex = 46;
-			// 
 			// comboBox1
 			// 
 			this->comboBox1->FormattingEnabled = true;
@@ -304,12 +284,13 @@ namespace dryfruits {
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(145, 24);
 			this->comboBox1->TabIndex = 47;
+			this->comboBox1->SelectedIndexChanged += gcnew System::EventHandler(this, &MyForm1::comboBox1_SelectedIndexChanged);
 			// 
 			// addtocart_button
 			// 
 			this->addtocart_button->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->addtocart_button->Location = System::Drawing::Point(389, 314);
+			this->addtocart_button->Location = System::Drawing::Point(798, 131);
 			this->addtocart_button->Name = L"addtocart_button";
 			this->addtocart_button->Size = System::Drawing::Size(106, 60);
 			this->addtocart_button->TabIndex = 48;
@@ -317,15 +298,72 @@ namespace dryfruits {
 			this->addtocart_button->UseVisualStyleBackColor = true;
 			this->addtocart_button->Click += gcnew System::EventHandler(this, &MyForm1::addtocart_button_Click);
 			// 
+			// cart_listBox
+			// 
+			this->cart_listBox->FormattingEnabled = true;
+			this->cart_listBox->ItemHeight = 16;
+			this->cart_listBox->Location = System::Drawing::Point(937, 81);
+			this->cart_listBox->Name = L"cart_listBox";
+			this->cart_listBox->Size = System::Drawing::Size(308, 196);
+			this->cart_listBox->TabIndex = 49;
+			// 
+			// customerName_label
+			// 
+			this->customerName_label->AutoSize = true;
+			this->customerName_label->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->customerName_label->Location = System::Drawing::Point(518, 321);
+			this->customerName_label->Name = L"customerName_label";
+			this->customerName_label->Size = System::Drawing::Size(174, 25);
+			this->customerName_label->TabIndex = 50;
+			this->customerName_label->Text = L"Custormer Name";
+			// 
+			// numericUpDown1
+			// 
+			this->numericUpDown1->Location = System::Drawing::Point(571, 154);
+			this->numericUpDown1->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->numericUpDown1->Name = L"numericUpDown1";
+			this->numericUpDown1->Size = System::Drawing::Size(90, 22);
+			this->numericUpDown1->TabIndex = 51;
+			this->numericUpDown1->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->numericUpDown1->ValueChanged += gcnew System::EventHandler(this, &MyForm1::numericUpDown1_ValueChanged);
+			// 
+			// price_label
+			// 
+			this->price_label->AutoSize = true;
+			this->price_label->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->price_label->Location = System::Drawing::Point(542, 199);
+			this->price_label->Name = L"price_label";
+			this->price_label->Size = System::Drawing::Size(141, 25);
+			this->price_label->TabIndex = 52;
+			this->price_label->Text = L"Product Price";
+			this->price_label->Click += gcnew System::EventHandler(this, &MyForm1::price_label_Click);
+			// 
+			// TotalPricelabel
+			// 
+			this->TotalPricelabel->AutoSize = true;
+			this->TotalPricelabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->TotalPricelabel->Location = System::Drawing::Point(830, 301);
+			this->TotalPricelabel->Name = L"TotalPricelabel";
+			this->TotalPricelabel->Size = System::Drawing::Size(141, 25);
+			this->TotalPricelabel->TabIndex = 53;
+			this->TotalPricelabel->Text = L"Product Price";
+			this->TotalPricelabel->Click += gcnew System::EventHandler(this, &MyForm1::TotalPricelabel_Click);
+			// 
 			// MyForm1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(8, 16);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(776, 402);
+			this->ClientSize = System::Drawing::Size(1257, 402);
+			this->Controls->Add(this->TotalPricelabel);
+			this->Controls->Add(this->price_label);
+			this->Controls->Add(this->numericUpDown1);
+			this->Controls->Add(this->customerName_label);
+			this->Controls->Add(this->cart_listBox);
 			this->Controls->Add(this->addtocart_button);
 			this->Controls->Add(this->comboBox1);
-			this->Controls->Add(this->textBox3);
-			this->Controls->Add(this->label13);
 			this->Controls->Add(this->label12);
 			this->Controls->Add(this->panel1);
 			this->Controls->Add(this->label11);
@@ -336,63 +374,146 @@ namespace dryfruits {
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
 			this->Controls->Add(this->label4);
-			this->Controls->Add(this->textBox1);
-			this->Controls->Add(this->label3);
 			this->Controls->Add(this->bill_button);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
 			this->Name = L"MyForm1";
 			this->Text = L"MyForm1";
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
+		
+
+		// List to hold items in the cart
+		List<CartItem^>^ cartItems = gcnew List<CartItem^>();
+
+		
+
+		int CalculateTotalPrice(List<CartItem^>^ cartItems) {
+
+			int totalPrice = 0;
+
+			for each (CartItem ^ item in cartItems) {
+				totalPrice += item->price;
+			}
+			return totalPrice;
 	
+		}
+
 	
+		void UpdateCartDisplay() {
+			// Clear the existing items from the ListBox
+			cart_listBox->Items->Clear();
+
+			// Add the items in the cart to the ListBox
+			for each (CartItem ^ item in cartItems) {
+				// Format the item string as "item_name - quantity"
+				String^ itemString = item->itemName + " - " + item->quantity.ToString() +"  price::" + item->price.ToString();
+
+				// Add the formatted item string to the ListBox
+				cart_listBox->Items->Add(itemString);
+			}
+		}
 
 private: System::Void addtocart_button_Click(System::Object^ sender, System::EventArgs^ e) {
 
-	String^ item = comboBox1->Text;
-	String^ No_of_packets = textBox1->Text;
-	String^ mobile = textBox3->Text;
+	// Get the selected item from the ComboBox
+	String^ selectedItem = comboBox1->SelectedItem->ToString();
 
-	try {
-		String^ con = "Data Source=sairam\\SQLEXPRESS;Initial Catalog=dryfoodproject;Integrated Security=True;";
-		SqlConnection conn(con);
-		conn.Open();
-		String^ sqlquery = "Insert into list(item,No_of_packets,mobile ) VALUES(@item,@No_of_packets,@Mobile);";
-		SqlCommand cmd(sqlquery, % conn);
+	// Get the quantity from the NumericUpDown control
+	int quantity = (int)numericUpDown1->Value;
 
-		cmd.Parameters->AddWithValue("@item", item);
-		cmd.Parameters->AddWithValue("@No_of_packets", No_of_packets);
-		cmd.Parameters->AddWithValue("@mobile", mobile);
+	// Get the selected item from the ComboBox
+	int price = System::Convert::ToInt32(price_label->Text);
 
-		if (item->Length == 0 || No_of_packets->Length <= 0 || mobile->Length == 0) {
-			MessageBox::Show("Please Fill All Details", "Missing Details", MessageBoxButtons::OK, MessageBoxIcon::Error);
-			comboBox1->Items->Clear();
-			textBox1->Clear();
-			textBox3->Clear();
-		}
-		else {
-			MessageBox::Show("Added Succesfully", "Added Successfull", MessageBoxButtons::OK, MessageBoxIcon::Asterisk);
-			cmd.ExecuteNonQuery();
-			conn.Close();
-			comboBox1->Items->Clear();
-			textBox1->Clear();
-			textBox3->Clear();
-			this->Close();
-		}
-	}
-	catch (Exception^ ex) {
-		MessageBox::Show(ex->Message, "Exception", MessageBoxButtons::OK, MessageBoxIcon::Error);
-	}
+	// Add the item to the cart
+	CartItem^ newItem = gcnew CartItem();
+	newItem->itemName = selectedItem;
+	newItem->quantity = quantity;
+	newItem->price = price;
+	cartItems->Add(newItem);
 
+	// Update the ListView or DataGridView
+	UpdateCartDisplay();
 
 }
+
+
 private: System::Void bill_button_Click(System::Object^ sender, System::EventArgs^ e) {
-	bill^ bi = gcnew bill();
-	bi->ShowDialog();
+	// Get the instance of billing_dform
+     payment^ billingForm = gcnew payment();
+
+	// Get data from MyForm1's listBox
+	List<System::String^>^ listBoxData = gcnew List<System::String^>();
+
+	for each (System::Object ^ item in cart_listBox->Items)
+	{
+		listBoxData->Add(item->ToString());
+	}
+
+	// Pass the data to billing_dform
+	billingForm->ReceiveDataFromMyForm1(listBoxData);
+
+
+
+	int totalprice = CalculateTotalPrice(cartItems);
+	// Print the total price to the console
+	Console::WriteLine("Total Price: " + totalprice);
+
+
+	billingForm->printTotalpice(totalprice);
+
+	// Show the billing form
+	billingForm->Show();
+}
+
+private: System::Void numericUpDown1_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
+	// Create an instance of the Calculation class
+	Calculation^ calculator = gcnew Calculation();
+
+	// Get the selected item from the ComboBox
+	String^ selectedItem = comboBox1->SelectedItem->ToString();
+
+	// Get the quantity from the NumericUpDown control
+	int quantity = (int)numericUpDown1->Value;
+
+	// Calculate the total price of the selected item using the CalculateItemTotal method
+	int totalPrice = calculator->CalculateItemTotal(selectedItem, quantity);
+
+	// Update the label to display the total price
+	price_label->Text =  totalPrice.ToString();
+}
+
+private: System::Void price_label_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void TotalPricelabel_Click(System::Object^ sender, System::EventArgs^ e) {
+
+
+	int totalprice = CalculateTotalPrice(cartItems);
+	// Print the total price to the console
+	Console::WriteLine("Total Price: " + totalprice);
+
+
+	TotalPricelabel->Text = System::Convert::ToString(totalprice);
+}
+private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
+	// Create an instance of the Calculation class
+	Calculation^ calculator = gcnew Calculation();
+
+	// Get the selected item from the ComboBox
+	String^ selectedItem = comboBox1->SelectedItem->ToString();
+
+	// Get the quantity from the NumericUpDown control
+	int quantity = (int)numericUpDown1->Value;
+
+	// Calculate the total price of the selected item using the CalculateItemTotal method
+	int totalPrice = calculator->CalculateItemTotal(selectedItem, quantity);
+
+	// Update the label to display the total price
+	price_label->Text = totalPrice.ToString();
 }
 };
 }
